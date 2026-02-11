@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IdeaVault - Capture, Organize, and Evolve Ideas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="top-bar">
+        <div class="logo">
+          <span class="logo-mark">IV</span>
+          <div>
+            <h1>IdeaVault</h1>
+            <p>Store. Connect. Grow.</p>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <a href="#dashboard">Dashboard</a>
+          <a href="#timeline">Timeline</a>
+          <a href="#analytics">Analytics</a>
+          <a href="#insights">Insights</a>
+        </nav>
+        <div class="actions">
+          <button class="ghost" id="themeToggle">Light/Dark</button>
+          <button class="primary" id="logoutBtn">Log out</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-text">
+            <div class="badge">Idea intelligence workspace</div>
+            <h2>Protect your ideas with a modern vault built for clarity.</h2>
+            <p>
+              IdeaVault helps you capture, categorize, and connect ideas in one seamless experience.
+              Track evolution over time, prioritize what matters, and receive gentle reminders to revisit your best concepts.
+            </p>
+            <div class="hero-actions">
+              <button class="primary" id="showRegister">Create an account</button>
+              <button class="ghost" id="showLogin">Sign in</button>
+            </div>
+            <div class="hero-stats">
+              <div>
+                <h3 id="statIdeas">0</h3>
+                <span>Ideas secured</span>
+              </div>
+              <div>
+                <h3 id="statCategories">0</h3>
+                <span>Categories</span>
+              </div>
+              <div>
+                <h3 id="statActivity">0</h3>
+                <span>Recent activity</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-card">
+            <h3>Next review</h3>
+            <p class="muted">Stay on top of your best thoughts.</p>
+            <div class="reminder" id="nextReminder">Loading reminder...</div>
+            <div class="ideas-preview" id="ideaPreview"></div>
+          </div>
+        </section>
+
+        <section class="auth" id="authSection">
+          <div class="auth-card">
+            <div class="auth-tabs">
+              <button class="tab active" data-tab="register">Register</button>
+              <button class="tab" data-tab="login">Login</button>
+            </div>
+            <form class="auth-form" id="registerForm">
+              <label>
+                Full name
+                <input type="text" name="name" placeholder="Jordan Lee" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="jordan@ideavault.dev" required />
+              </label>
+              <label>
+                Password
+                <input type="password" name="password" placeholder="Create a strong password" required />
+              </label>
+              <button type="submit" class="primary">Create account</button>
+            </form>
+            <form class="auth-form hidden" id="loginForm">
+              <label>
+                Email
+                <input type="email" name="email" placeholder="you@ideavault.dev" required />
+              </label>
+              <label>
+                Password
+                <input type="password" name="password" placeholder="Your password" required />
+              </label>
+              <button type="submit" class="primary">Sign in</button>
+            </form>
+            <p class="auth-note" id="authMessage"></p>
+          </div>
+          <div class="auth-highlight">
+            <h3>Why teams choose IdeaVault</h3>
+            <ul>
+              <li>Elegant, distraction-free space to capture ideas.</li>
+              <li>Smart linking that reveals hidden patterns.</li>
+              <li>Timeline view to track concept evolution.</li>
+              <li>Personalized reminders keep momentum alive.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="dashboard hidden" id="dashboard">
+          <div class="section-heading">
+            <div>
+              <h2>Your Idea Dashboard</h2>
+              <p class="muted">Organize ideas by tags, priority, and connections.</p>
+            </div>
+            <button class="primary" id="openIdeaForm">New idea</button>
+          </div>
+          <div class="idea-grid" id="ideaGrid"></div>
+        </section>
+
+        <section class="timeline hidden" id="timeline">
+          <div class="section-heading">
+            <div>
+              <h2>Evolution Timeline</h2>
+              <p class="muted">Follow how your ideas grow and mature over time.</p>
+            </div>
+            <div class="filters">
+              <button class="ghost primary" data-filter="All">All</button>
+              <button class="ghost" data-filter="High">High Priority</button>
+              <button class="ghost" data-filter="Medium">Medium Priority</button>
+              <button class="ghost" data-filter="Low">Low Priority</button>
+            </div>
+          </div>
+          <div class="timeline-list" id="timelineList"></div>
+        </section>
+
+        <section class="analytics hidden" id="analytics">
+          <div class="section-heading">
+            <div>
+              <h2>Insightful Analytics</h2>
+              <p class="muted">Measure momentum across your idea ecosystem.</p>
+            </div>
+            <div class="analytics-highlight" id="analyticsHighlight"></div>
+          </div>
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h3>Total ideas</h3>
+              <p id="analyticsIdeas">0</p>
+            </div>
+            <div class="analytics-card">
+              <h3>Active categories</h3>
+              <p id="analyticsCategories">0</p>
+            </div>
+            <div class="analytics-card">
+              <h3>Monthly activity</h3>
+              <ul id="analyticsActivity"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="insights hidden" id="insights">
+          <div class="section-heading">
+            <div>
+              <h2>Smart Suggestions</h2>
+              <p class="muted">Discover related ideas and spark new connections.</p>
+            </div>
+          </div>
+          <div class="suggestions" id="suggestions"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>IdeaVault © 2024. Crafted for visionaries.</p>
+      </footer>
+
+      <div class="modal hidden" id="ideaModal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3>Create a new idea</h3>
+            <button class="ghost" id="closeIdeaForm">Close</button>
+          </div>
+          <form id="ideaForm" class="idea-form">
+            <label>
+              Idea title
+              <input type="text" name="title" placeholder="Name your next breakthrough" required />
+            </label>
+            <label>
+              Description
+              <textarea name="description" rows="3" placeholder="Describe the vision" required></textarea>
+            </label>
+            <label>
+              Tags (comma separated)
+              <input type="text" name="tags" placeholder="community, design, wellness" />
+            </label>
+            <label>
+              Priority
+              <select name="priority">
+                <option>High</option>
+                <option selected>Medium</option>
+                <option>Low</option>
+              </select>
+            </label>
+            <button type="submit" class="primary">Save idea</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
