@@ -29,7 +29,7 @@
           <a href="#insights">Insights</a>
         </nav>
         <div class="actions">
-          <button class="ghost" id="themeToggle">Light/Dark</button>
+          <button class="ghost" id="themeToggle">Dark mode</button>
           <button class="primary" id="logoutBtn">Log out</button>
         </div>
       </header>
@@ -124,6 +124,16 @@
             <button class="primary" id="openIdeaForm">New idea</button>
           </div>
           <div class="idea-grid" id="ideaGrid"></div>
+          <div class="dashboard-panels">
+            <div class="panel">
+              <h3>Review reminders</h3>
+              <ul id="notificationList" class="notification-list"></ul>
+            </div>
+            <div class="panel">
+              <h3>Priority focus</h3>
+              <div id="prioritySummary" class="priority-summary"></div>
+            </div>
+          </div>
         </section>
 
         <section class="timeline hidden" id="timeline">

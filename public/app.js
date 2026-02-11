@@ -33,6 +33,8 @@ const elements = {
   ideaModal: document.getElementById("ideaModal"),
   closeIdeaForm: document.getElementById("closeIdeaForm"),
   ideaForm: document.getElementById("ideaForm"),
+  notificationList: document.getElementById("notificationList"),
+  prioritySummary: document.getElementById("prioritySummary"),
   themeBody: document.body,
 };
 
@@ -73,6 +75,7 @@ const updateTheme = (mode) => {
   } else {
     elements.themeBody.classList.remove("dark");
   }
+  elements.themeToggle.textContent = mode === "dark" ? "Light mode" : "Dark mode";
   localStorage.setItem("ideavault_theme", mode);
 };
 
@@ -88,27 +91,55 @@ const formatDate = (value) => new Date(value).toLocaleDateString("en-US", {
 });
 
 const renderIdeas = () => {
-  elements.ideaGrid.innerHTML = "";
-  state.ideas.forEach((idea) => {
-    const card = document.createElement("article");
-    card.className = "idea-card";
+  if (!state.ideas.length) {
+    elements.ideaGrid.innerHTML = "<p class='muted'>Start by capturing your first idea.</p>";
+    return;
+  }
 
-    const tags = idea.tags.map((tag) => `<span class="tag">${tag}</span>`).join("");
-    card.innerHTML = `
-      <div>
-        <h3>${idea.title}</h3>
-        <p class="muted">${idea.description}</p>
-      </div>
-      <div class="tags">${tags || "<span class='muted'>No tags yet</span>"}</div>
-      <span class="priority ${idea.priority}">${idea.priority} Priority</span>
-      <div class="idea-actions">
-        <small class="muted">Updated ${formatDate(idea.updatedAt)}</small>
-        <button class="ghost" data-share="${idea.id}">${idea.shared ? "Shared" : "Share"}</button>
-      </div>
-    `;
+  const groups = state.ideas.reduce((acc, idea) => {
+    const primaryTag = idea.tags[0] || "Uncategorized";
+    if (!acc[primaryTag]) {
+      acc[primaryTag] = [];
+    }
+    acc[primaryTag].push(idea);
+    return acc;
+  }, {});
 
-    elements.ideaGrid.appendChild(card);
-  });
+  elements.ideaGrid.innerHTML = Object.entries(groups)
+    .map(([tag, ideas]) => {
+      const groupCards = ideas
+        .map((idea) => {
+          const tags = idea.tags.map((item) => `<span class="tag">${item}</span>`).join("");
+          return `
+            <article class="idea-card">
+              <div>
+                <h3>${idea.title}</h3>
+                <p class="muted">${idea.description}</p>
+              </div>
+              <div class="tags">${tags || "<span class='muted'>No tags yet</span>"}</div>
+              <span class="priority ${idea.priority}">${idea.priority} Priority</span>
+              <div class="idea-actions">
+                <small class="muted">Updated ${formatDate(idea.updatedAt)}</small>
+                <button class="ghost" data-share="${idea.id}">${idea.shared ? "Shared" : "Share"}</button>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+
+      return `
+        <section class="tag-group">
+          <div class="tag-group-header">
+            <h3>${tag}</h3>
+            <span>${ideas.length} idea${ideas.length > 1 ? "s" : ""}</span>
+          </div>
+          <div class="tag-group-grid">
+            ${groupCards}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
 };
 
 const renderTimeline = (filter = "All") => {
@@ -120,6 +151,7 @@ const renderTimeline = (filter = "All") => {
         <div>
           <strong>${formatDate(idea.createdAt)}</strong>
           <span>${idea.priority} Priority</span>
+          <small class="muted">Updated ${formatDate(idea.updatedAt)}</small>
         </div>
         <div>
           <h3>${idea.title}</h3>
@@ -186,13 +218,45 @@ const renderHero = () => {
     ? `${nextReminder.message} • ${formatDate(nextReminder.due)}`
     : "No reminders set. Add a review schedule.";
 
-  elements.ideaPreview.innerHTML = state.ideas
-    .slice(0, 2)
-    .map(
-      (idea) => `
+  elements.ideaPreview.innerHTML = state.ideas.length
+    ? state.ideas
+        .slice(0, 2)
+        .map(
+          (idea) => `
       <div class="idea-preview-card">
         <strong>${idea.title}</strong>
         <p class="muted">${idea.priority} priority · ${idea.tags.join(", ") || "No tags"}</p>
+      </div>
+    `
+        )
+        .join("")
+    : "<p class='muted'>Capture a new idea to see a preview here.</p>";
+};
+
+const renderDashboardPanels = () => {
+  if (!elements.notificationList || !elements.prioritySummary) return;
+
+  elements.notificationList.innerHTML = state.notifications.length
+    ? state.notifications
+        .map((reminder) => `<li>${reminder.message} • ${formatDate(reminder.due)}</li>`)
+        .join("")
+    : "<li class='muted'>No review reminders scheduled yet.</li>";
+
+  const priorities = ["High", "Medium", "Low"];
+  const counts = state.ideas.reduce(
+    (acc, idea) => {
+      acc[idea.priority] = (acc[idea.priority] || 0) + 1;
+      return acc;
+    },
+    { High: 0, Medium: 0, Low: 0 }
+  );
+
+  elements.prioritySummary.innerHTML = priorities
+    .map(
+      (priority) => `
+      <div class="priority-pill ${priority}">
+        <span>${priority} priority</span>
+        <span>${counts[priority]}</span>
       </div>
     `
     )
@@ -216,6 +280,7 @@ const loadData = async () => {
   renderTimeline();
   renderAnalytics();
   renderHero();
+  renderDashboardPanels();
   renderSuggestions();
 };
 
